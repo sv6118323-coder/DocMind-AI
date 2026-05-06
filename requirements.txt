@@ -1,0 +1,25 @@
+# ── Web Framework ─────────────────────────────────────────────────────────────
+fastapi
+uvicorn[standard]
+python-multipart
+
+# ── LangChain Core ─────────────────────────────────────────────────────────────
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+
+# ── LLM & Embeddings ───────────────────────────────────────────────────────────
+langchain-groq
+langchain-huggingface
+sentence-transformers
+
+# ── Vector Database ────────────────────────────────────────────────────────────
+langchain-chroma
+chromadb
+
+# ── PDF Parsing ────────────────────────────────────────────────────────────────
+pypdf
+
+# ── Environment Variables (optional but recommended) ──────────────────────────
+python-dotenv

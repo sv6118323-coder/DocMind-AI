@@ -1,0 +1,609 @@
+/* =============================================================================
+   style.css
+   =============================================================================
+
+   ## 📘 File Overview: Application Stylesheet
+
+   This file styles the entire SmartDoc AI user interface.
+   It covers:
+     - Global resets and CSS variables (design tokens)
+     - Body background and font settings
+     - The main centered container card
+     - Upload section layout and file picker styling
+     - Chat box and message bubble styles (user, bot, loading)
+     - Triple-response tab card system (Q&A / Summary / Insights tabs)
+     - Text input and send button layout
+     - Badge chips in the "How It Works" footer
+     - Responsive adjustments for smaller screens
+
+   ## 🛠️ CSS Techniques Used
+
+   | Technique                  | Purpose                                              |
+   |----------------------------|------------------------------------------------------|
+   | CSS Custom Properties (vars) | Centralised design tokens for colours/spacing      |
+   | Flexbox (`display: flex`)  | Row/column layouts for input area, tab buttons       |
+   | `overflow-y: auto`         | Makes the chatBox scrollable when content overflows  |
+   | `transition`               | Smooth animations on hover and active state changes  |
+   | `@keyframes`               | Defines the loading pulse animation                  |
+   | `@media` query             | Narrows layout on mobile screens (< 600px)           |
+   | `:hover`, `:focus`         | Interactive state styles for buttons and inputs      |
+   | `box-shadow`               | Depth/elevation on the container card                |
+   | `border-radius`            | Rounded corners on cards, bubbles, and buttons       |
+
+   ============================================================================= */
+
+
+/* ── CSS Variables (Design Tokens) ────────────────────────────────────────── */
+
+:root {
+  /* ^ :root targets the <html> element — the highest specificity for CSS variables.
+       Defining variables here makes them accessible everywhere in the stylesheet.
+       To change the colour scheme, edit only this block. */
+
+  --primary:     #2563eb;
+  /* ^ Main brand blue used on the primary Upload button and accents. */
+
+  --primary-dark: #1d4ed8;
+  /* ^ Darker shade of primary blue for hover states. */
+
+  --send-btn:    #059669;
+  /* ^ Emerald green for the Send button — distinct from the Upload button. */
+
+  --send-dark:   #047857;
+  /* ^ Darker green for the Send button hover state. */
+
+  --bg:          #f1f5f9;
+  /* ^ Light slate background colour for the page body. */
+
+  --card-bg:     #ffffff;
+  /* ^ Pure white background for the main container card. */
+
+  --border:      #e2e8f0;
+  /* ^ Light grey used for borders, separators, and the chat box border. */
+
+  --text:        #1e293b;
+  /* ^ Dark slate text colour — near-black for high readability. */
+
+  --muted:       #64748b;
+  /* ^ Muted medium grey for subtitles, placeholders, and secondary text. */
+
+  --user-bg:     #dbeafe;
+  /* ^ Pale blue background for user message bubbles. */
+
+  --bot-bg:      #f8fafc;
+  /* ^ Near-white background for bot message bubbles. */
+
+  --radius:      12px;
+  /* ^ Standard border radius applied to cards, chat box, and bubbles. */
+
+  --shadow:      0 4px 24px rgba(0,0,0,0.08);
+  /* ^ Subtle drop shadow applied to the main container for depth/elevation. */
+}
+
+
+/* ── Global Reset & Base Styles ───────────────────────────────────────────── */
+
+*, *::before, *::after {
+  /* ^ Universal selector: targets every HTML element and its ::before/::after pseudo-elements.
+       Used to apply a consistent box model across all elements. */
+  box-sizing: border-box;
+  /* ^ Makes width/height include padding and border (not just content).
+       Prevents layouts from breaking when padding is added to elements. */
+  margin: 0;
+  /* ^ Remove browser default margins (e.g., <h1> has top/bottom margin by default). */
+  padding: 0;
+  /* ^ Remove browser default padding (e.g., <ul> has left padding by default). */
+}
+
+body {
+  /* ^ Styles the <body> element — the visible area of the page. */
+  font-family: 'Inter', system-ui, sans-serif;
+  /* ^ Set Inter as the primary font (loaded from Google Fonts in index.html).
+       system-ui and sans-serif are fallbacks if Inter fails to load. */
+  background: var(--bg);
+  /* ^ Use the light slate CSS variable as the page background colour. */
+  color: var(--text);
+  /* ^ Use the dark slate CSS variable as the default text colour. */
+  min-height: 100vh;
+  /* ^ Ensure the body is at least the full viewport height, even with little content.
+       Prevents the background colour from ending partway down the screen. */
+  display: flex;
+  /* ^ Use flexbox on the body to enable centering the container. */
+  align-items: flex-start;
+  /* ^ Align the container to the top of the page (not vertically centred). */
+  justify-content: center;
+  /* ^ Horizontally center the container. */
+  padding: 24px 16px;
+  /* ^ 24px top/bottom padding and 16px left/right padding around the container. */
+}
+
+
+/* ── Main Container Card ──────────────────────────────────────────────────── */
+
+.container {
+  /* ^ The main white card that wraps the entire SmartDoc AI interface. */
+  width: 100%;
+  /* ^ Take full width of the parent (body), up to the max-width below. */
+  max-width: 680px;
+  /* ^ Cap the card width at 680px so it doesn't stretch too wide on large screens. */
+  background: var(--card-bg);
+  /* ^ White background to stand out from the grey page background. */
+  border-radius: var(--radius);
+  /* ^ Rounded corners (12px) for a modern card appearance. */
+  box-shadow: var(--shadow);
+  /* ^ Subtle shadow to lift the card off the background (sense of depth). */
+  padding: 28px 32px;
+  /* ^ 28px top/bottom internal spacing and 32px left/right. */
+  display: flex;
+  /* ^ Use flexbox for the vertical layout of internal sections. */
+  flex-direction: column;
+  /* ^ Stack child elements vertically (header → upload → chat → input). */
+  gap: 20px;
+  /* ^ 20px gap between each direct child section (instead of using margin). */
+}
+
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.header h1 {
+  /* ^ Target the <h1> inside .header. */
+  font-size: 1.6rem;
+  /* ^ 1.6× the browser's base font size (usually 16px → 25.6px). */
+  font-weight: 700;
+  /* ^ Bold weight for the title. */
+  color: var(--text);
+  /* ^ Dark slate colour for the heading. */
+  margin-bottom: 4px;
+  /* ^ 4px space between the title and the subtitle. */
+}
+
+.subtitle {
+  /* ^ The paragraph subtitle below the main heading. */
+  color: var(--muted);
+  /* ^ Muted grey to visually de-emphasise compared to the heading. */
+  font-size: 0.9rem;
+  /* ^ Slightly smaller than the base font size. */
+}
+
+
+/* ── Upload Section ───────────────────────────────────────────────────────── */
+
+.upload-section {
+  /* ^ The box containing the file input, upload button, and status message. */
+  background: #f8fafc;
+  /* ^ Very light background to subtly distinguish this from the white card. */
+  border: 1px solid var(--border);
+  /* ^ 1px light grey border. */
+  border-radius: 8px;
+  /* ^ Slightly less rounded than the outer container (8px vs 12px). */
+  padding: 16px 20px;
+  /* ^ Internal spacing inside the upload box. */
+  display: flex;
+  /* ^ Flex row layout for the label, input, and button. */
+  flex-wrap: wrap;
+  /* ^ Wrap to the next line on small screens so items don't overflow. */
+  align-items: center;
+  /* ^ Vertically centre all items within the row. */
+  gap: 10px;
+  /* ^ 10px gap between each item. */
+}
+
+input[type="file"] {
+  /* ^ The hidden file picker input. We hide it and use the <label> as the visual trigger. */
+  display: none;
+  /* ^ Hide the default (ugly) file input. The <label> for it acts as the visual button. */
+}
+
+.file-label {
+  /* ^ The styled button-like label that triggers the file picker on click. */
+  cursor: pointer;
+  /* ^ Show a pointer cursor on hover to indicate it's clickable. */
+  background: var(--card-bg);
+  /* ^ White background. */
+  border: 1px solid var(--border);
+  /* ^ Light grey border. */
+  border-radius: 6px;
+  /* ^ Slightly rounded corners. */
+  padding: 8px 14px;
+  /* ^ Comfortable click target size. */
+  font-size: 0.875rem;
+  /* ^ Slightly smaller font. */
+  color: var(--muted);
+  /* ^ Grey text (changes to text colour when a file is selected via JS). */
+  transition: border-color 0.2s;
+  /* ^ Smooth 0.2s transition for the border-color property on hover. */
+}
+
+.file-label:hover {
+  /* ^ Hover state for the file label. */
+  border-color: var(--primary);
+  /* ^ Turn the border blue when hovered to indicate interactivity. */
+}
+
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+.btn {
+  /* ^ Base button styles shared by all buttons. */
+  border: none;
+  /* ^ Remove the default browser border from buttons. */
+  border-radius: 6px;
+  /* ^ Rounded corners. */
+  padding: 9px 18px;
+  /* ^ Vertical and horizontal padding for a comfortable click target. */
+  font-size: 0.875rem;
+  /* ^ Smaller font size for buttons. */
+  font-weight: 500;
+  /* ^ Medium font weight — slightly bold but not full bold. */
+  cursor: pointer;
+  /* ^ Pointer cursor on hover to signal the element is clickable. */
+  transition: background 0.2s, transform 0.1s;
+  /* ^ Smooth 0.2s transition for background colour changes on hover.
+       0.1s transform for a slight press effect on click. */
+}
+
+.btn:active {
+  /* ^ Style applied while the button is being clicked (mouse/touch held down). */
+  transform: scale(0.97);
+  /* ^ Slightly shrink the button to 97% of its size for a "press" feel. */
+}
+
+.btn-primary {
+  /* ^ The primary Upload button style. */
+  background: var(--primary);
+  /* ^ Brand blue background. */
+  color: white;
+  /* ^ White text on the blue background for contrast. */
+}
+
+.btn-primary:hover {
+  /* ^ Hover state for the Upload button. */
+  background: var(--primary-dark);
+  /* ^ Darker blue when hovered — visual feedback. */
+}
+
+.btn-send {
+  /* ^ The Send button style — distinct colour from the Upload button. */
+  background: var(--send-btn);
+  /* ^ Emerald green background. */
+  color: white;
+  /* ^ White text. */
+  white-space: nowrap;
+  /* ^ Prevent "Send ➤" from wrapping onto two lines in the flex row. */
+}
+
+.btn-send:hover {
+  /* ^ Hover state for the Send button. */
+  background: var(--send-dark);
+  /* ^ Darker green when hovered. */
+}
+
+
+/* ── Upload Status Message ────────────────────────────────────────────────── */
+
+.upload-status {
+  /* ^ The status message that appears below the upload controls. */
+  width: 100%;
+  /* ^ Full width of the upload-section, below the row of controls. */
+  font-size: 0.85rem;
+  /* ^ Small text for the status message. */
+  margin-top: 4px;
+  /* ^ Small gap above the status line. */
+  min-height: 1.2em;
+  /* ^ Reserve vertical space even when empty so the layout doesn't jump. */
+}
+
+.upload-status.loading { color: var(--muted); }
+/* ^ Muted grey text for the loading/pending state. */
+
+.upload-status.success { color: #059669; }
+/* ^ Emerald green text for a successful upload. */
+
+.upload-status.error   { color: #dc2626; }
+/* ^ Red text for error messages. */
+
+
+/* ── Chat Box ─────────────────────────────────────────────────────────────── */
+
+.chat-box {
+  /* ^ The scrollable container that holds all chat messages. */
+  height: 360px;
+  /* ^ Fixed height so the chat box doesn't grow as messages are added.
+       The content scrolls inside this fixed area. */
+  overflow-y: auto;
+  /* ^ Enable vertical scrolling when chat content exceeds 360px height.
+       The x-axis never scrolls (hidden by default). */
+  border: 1px solid var(--border);
+  /* ^ Light grey border around the chat area. */
+  border-radius: var(--radius);
+  /* ^ Match the outer container's rounded corners. */
+  padding: 16px;
+  /* ^ Inner spacing so messages don't touch the edge. */
+  display: flex;
+  /* ^ Flexbox to stack messages vertically. */
+  flex-direction: column;
+  /* ^ Stack items from top to bottom. */
+  gap: 10px;
+  /* ^ 10px vertical gap between consecutive messages. */
+  scroll-behavior: smooth;
+  /* ^ Smooth animated scrolling when JavaScript sets scrollTop.
+       Makes auto-scrolling to new messages feel natural. */
+}
+
+
+/* ── Message Bubbles ──────────────────────────────────────────────────────── */
+
+.message {
+  /* ^ Base styles for every chat message bubble (user and bot). */
+  padding: 10px 14px;
+  /* ^ Inner padding inside the bubble. */
+  border-radius: 10px;
+  /* ^ Rounded corners on the bubble. */
+  line-height: 1.6;
+  /* ^ 1.6× the font-size as line height for comfortable reading. */
+  font-size: 0.9rem;
+  /* ^ Slightly smaller than the base font size. */
+  max-width: 90%;
+  /* ^ Bubbles can be at most 90% of the chat box width.
+       This prevents very short messages from stretching across the full width. */
+  word-wrap: break-word;
+  /* ^ Break long words/URLs that would overflow the bubble boundary. */
+}
+
+.message.user {
+  /* ^ Styles specific to the user's own message bubbles. */
+  background: var(--user-bg);
+  /* ^ Pale blue background to differentiate from bot messages. */
+  align-self: flex-end;
+  /* ^ Push user bubbles to the RIGHT side of the flex column (right-aligned). */
+  text-align: right;
+  /* ^ Right-align text inside the bubble (conventional for user messages). */
+}
+
+.message.bot {
+  /* ^ Styles specific to the AI bot's message bubbles. */
+  background: var(--bot-bg);
+  /* ^ Very light background for bot messages. */
+  border: 1px solid var(--border);
+  /* ^ Light grey border to define the bubble boundary against the white chat box. */
+  align-self: flex-start;
+  /* ^ Push bot bubbles to the LEFT side of the flex column (left-aligned). */
+}
+
+.message.loading {
+  /* ^ Style for the temporary "AI is thinking..." loading bubble. */
+  color: var(--muted);
+  /* ^ Muted grey text so it visually differs from real responses. */
+  animation: pulse 1.2s ease-in-out infinite;
+  /* ^ Apply the pulse animation (defined below) — repeats forever (infinite)
+       with a 1.2s duration and ease-in-out timing (slows at start/end). */
+}
+
+@keyframes pulse {
+  /* ^ Define the "pulse" animation keyframes.
+       Keyframes describe the CSS state at specific points in the animation. */
+  0%   { opacity: 1;   }
+  /* ^ At 0% of the animation duration (start), full opacity. */
+  50%  { opacity: 0.4; }
+  /* ^ At 50%, fade to 40% opacity (half-visible). */
+  100% { opacity: 1;   }
+  /* ^ At 100% (end), back to full opacity. Then the cycle repeats. */
+}
+
+.welcome-message {
+  /* ^ Special style for the initial greeting message in the chat. */
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+  /* ^ A subtle diagonal gradient from pale blue to pale green. */
+  border: 1px solid #bfdbfe;
+  /* ^ Slightly blue-tinted border to match the gradient. */
+}
+
+
+/* ── Triple Response Tab Card ─────────────────────────────────────────────── */
+
+.triple-card {
+  /* ^ The outer container of the tabbed 3-mode response card.
+       Extends the base .message.bot styles. */
+  padding: 0;
+  /* ^ Override the .message padding — the inner elements handle their own padding. */
+  overflow: hidden;
+  /* ^ Clip child elements to the card's border-radius (prevents tabs from overflowing). */
+}
+
+.tab-buttons {
+  /* ^ The row of three tab buttons (Q&A / Summary / Insights). */
+  display: flex;
+  /* ^ Place the buttons in a horizontal row. */
+  border-bottom: 1px solid var(--border);
+  /* ^ Separator line between the tab buttons and the content panel below. */
+  background: #f8fafc;
+  /* ^ Light background for the tab header area. */
+}
+
+.tab-btn {
+  /* ^ Individual tab button (Q&A, Summary, or Insights). */
+  flex: 1;
+  /* ^ Each tab button takes equal share of the available width. */
+  border: none;
+  /* ^ Remove default button border. */
+  background: transparent;
+  /* ^ Transparent by default — shows the .tab-buttons background. */
+  padding: 10px 8px;
+  /* ^ Comfortable padding inside each tab button. */
+  cursor: pointer;
+  /* ^ Pointer cursor to show it's clickable. */
+  font-size: 0.8rem;
+  /* ^ Small font for the tab labels. */
+  font-weight: 500;
+  /* ^ Medium bold for readability. */
+  color: var(--muted);
+  /* ^ Muted grey for inactive tabs. */
+  border-bottom: 2px solid transparent;
+  /* ^ 2px bottom border, initially transparent.
+       Active tabs get a coloured bottom border instead (see below). */
+  transition: color 0.2s, border-color 0.2s;
+  /* ^ Smooth transitions for colour and border changes on tab switch. */
+}
+
+.tab-btn:hover {
+  /* ^ Hover state for inactive tab buttons. */
+  color: var(--text);
+  /* ^ Darken the text on hover for visual feedback. */
+}
+
+.tab-btn.active {
+  /* ^ The currently selected (active) tab button. */
+  color: var(--primary);
+  /* ^ Blue text for the active tab label. */
+  border-bottom-color: var(--primary);
+  /* ^ Blue underline for the active tab to show which is selected. */
+  background: var(--card-bg);
+  /* ^ White background on active tab to visually lift it above the header. */
+}
+
+.tab-panel {
+  /* ^ Each content panel (one per tab). Only the active one is visible. */
+  display: none;
+  /* ^ Hidden by default. The "active" class overrides this to show the panel. */
+  padding: 14px 16px;
+  /* ^ Inner padding for the content inside each panel. */
+  line-height: 1.7;
+  /* ^ Comfortable line height for reading longer AI-generated text. */
+  white-space: pre-wrap;
+  /* ^ Preserve whitespace and line breaks from the LLM response.
+       pre-wrap is like <pre> but still wraps at the container edge. */
+  font-size: 0.875rem;
+  /* ^ Slightly smaller font size for the response content. */
+}
+
+.tab-panel.active {
+  /* ^ The currently visible panel (matching the active tab). */
+  display: block;
+  /* ^ Override display: none to show this panel. */
+}
+
+
+/* ── Input Area ───────────────────────────────────────────────────────────── */
+
+.input-area {
+  /* ^ The row containing the text input field and the Send button. */
+  display: flex;
+  /* ^ Horizontal flex row. */
+  gap: 8px;
+  /* ^ 8px gap between the text input and the Send button. */
+  align-items: center;
+  /* ^ Vertically centre both the input and the button. */
+}
+
+.message-input {
+  /* ^ The text input field where users type their question. */
+  flex: 1;
+  /* ^ Take up all remaining horizontal space after the Send button. */
+  padding: 10px 14px;
+  /* ^ Inner padding for comfortable text entry. */
+  border: 1px solid var(--border);
+  /* ^ Light grey border. */
+  border-radius: 8px;
+  /* ^ Rounded corners. */
+  font-size: 0.9rem;
+  /* ^ Match the font size of chat messages. */
+  font-family: inherit;
+  /* ^ Inherit the 'Inter' font from the body — browser inputs use system font by default. */
+  outline: none;
+  /* ^ Remove the default browser blue focus ring (we add our own below). */
+  transition: border-color 0.2s;
+  /* ^ Smooth transition for border colour change on focus. */
+}
+
+.message-input:focus {
+  /* ^ Style applied when the user clicks into the input (has keyboard focus). */
+  border-color: var(--primary);
+  /* ^ Blue border on focus to clearly indicate which field is active. */
+}
+
+.message-input::placeholder {
+  /* ^ Style for the placeholder text inside the input. */
+  color: var(--muted);
+  /* ^ Muted grey for the placeholder, lighter than typed text. */
+}
+
+
+/* ── How It Works Footer ──────────────────────────────────────────────────── */
+
+.how-it-works {
+  /* ^ The small explanatory row at the bottom of the container. */
+  text-align: center;
+  /* ^ Center the badge chips horizontally. */
+  padding-top: 4px;
+  /* ^ Small space above this row. */
+  border-top: 1px solid var(--border);
+  /* ^ Subtle separator line above the footer. */
+}
+
+.how-it-works p {
+  /* ^ The paragraph inside the how-it-works section. */
+  font-size: 0.8rem;
+  /* ^ Small font for the footer text. */
+  color: var(--muted);
+  /* ^ Muted grey text. */
+}
+
+.badge {
+  /* ^ Small coloured pill chip labels for each response mode. */
+  display: inline-block;
+  /* ^ Allow padding and border-radius on an inline element. */
+  padding: 2px 8px;
+  /* ^ Tight padding for a compact pill shape. */
+  border-radius: 999px;
+  /* ^ Very large radius makes the element fully pill-shaped (like a capsule). */
+  font-size: 0.75rem;
+  /* ^ Very small font to keep the badges compact. */
+  font-weight: 600;
+  /* ^ Semi-bold for legibility. */
+}
+
+.badge.qa       { background: #dbeafe; color: #1d4ed8; }
+/* ^ Blue badge for Q&A — same palette as user message bubbles. */
+
+.badge.summary  { background: #dcfce7; color: #166534; }
+/* ^ Green badge for Summary. */
+
+.badge.insights { background: #fef3c7; color: #92400e; }
+/* ^ Amber/orange badge for Insights. */
+
+
+/* ── Responsive Design (Mobile) ───────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  /* ^ Apply these styles only when the viewport is 600px wide or less.
+       Targets phones and narrow windows. */
+
+  .container {
+    padding: 16px;
+    /* ^ Reduce padding on mobile so content isn't cramped. */
+  }
+
+  .chat-box {
+    height: 280px;
+    /* ^ Shorter chat box on mobile to leave room for the keyboard. */
+  }
+
+  .upload-section {
+    flex-direction: column;
+    /* ^ Stack upload controls vertically on mobile instead of in a row. */
+    align-items: stretch;
+    /* ^ Stretch items to full width in the column. */
+  }
+
+  .btn {
+    width: 100%;
+    /* ^ Full-width buttons on mobile — easier to tap. */
+  }
+
+  .tab-btn {
+    font-size: 0.7rem;
+    /* ^ Smaller tab button font on mobile to fit all three in the row. */
+    padding: 8px 4px;
+    /* ^ Reduced padding on mobile. */
+  }
+}
