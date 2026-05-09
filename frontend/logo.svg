@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+
+  <!-- Indigo rounded square background -->
+  <rect width="42" height="42" rx="10" fill="#4f46e5"/>
+
+  <!-- LEFT brain hemisphere -->
+  <path d="M21,7 C16,7 10,11 9,17 C8,22 9,26 11,29 C9,32 9,36 12,38 C14,40 18,41 21,41 L21,7 Z"
+        fill="#5a54f0"/>
+
+  <!-- RIGHT brain hemisphere -->
+  <path d="M21,7 C26,7 32,11 33,17 C34,22 33,26 31,29 C33,32 33,36 30,38 C28,40 24,41 21,41 L21,7 Z"
+        fill="#7c78f5"/>
+
+  <!-- Center groove -->
+  <line x1="21" y1="7" x2="21" y2="41" stroke="#3730a3" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- LEFT hemisphere folds -->
+  <path d="M15,13 Q10,17 12,22" fill="none" stroke="#e0e7ff" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M10,25 Q8,29 11,33"  fill="none" stroke="#e0e7ff" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M14,35 Q11,37 13,39" fill="none" stroke="#c7d2fe" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- RIGHT hemisphere folds -->
+  <path d="M27,13 Q32,17 30,22" fill="none" stroke="#c7d2fe" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M32,25 Q34,29 31,33" fill="none" stroke="#c7d2fe" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M28,35 Q31,37 29,39" fill="none" stroke="#a5b4fc" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- LEFT synapse nodes -->
+  <circle cx="13" cy="17" r="1.8" fill="#ffffff" opacity="0.95"/>
+  <circle cx="10" cy="29" r="1.8" fill="#ffffff" opacity="0.85"/>
+  <circle cx="13" cy="38" r="1.4" fill="#ffffff" opacity="0.70"/>
+
+  <!-- RIGHT synapse nodes -->
+  <circle cx="29" cy="17" r="1.8" fill="#ffffff" opacity="0.95"/>
+  <circle cx="32" cy="29" r="1.8" fill="#ffffff" opacity="0.85"/>
+  <circle cx="29" cy="38" r="1.4" fill="#ffffff" opacity="0.70"/>
+
+  <!-- Neural cross connections -->
+  <line x1="13" y1="17" x2="21" y2="22" stroke="#e0e7ff" stroke-width="0.7" opacity="0.5" stroke-dasharray="2,1.5"/>
+  <line x1="29" y1="17" x2="21" y2="22" stroke="#e0e7ff" stroke-width="0.7" opacity="0.5" stroke-dasharray="2,1.5"/>
+  <line x1="10" y1="29" x2="21" y2="28" stroke="#e0e7ff" stroke-width="0.7" opacity="0.4" stroke-dasharray="2,1.5"/>
+  <line x1="32" y1="29" x2="21" y2="28" stroke="#e0e7ff" stroke-width="0.7" opacity="0.4" stroke-dasharray="2,1.5"/>
+
+  <!-- Center mind core -->
+  <circle cx="21" cy="25" r="4"   fill="#ffffff" opacity="0.95"/>
+  <circle cx="21" cy="25" r="2.2" fill="#4f46e5"/>
+  <circle cx="21" cy="25" r="0.9" fill="#ffffff"/>
+
+  <!-- Brain stem -->
+  <rect x="18" y="40" width="6" height="2" rx="1" fill="#3730a3"/>
+
+</svg>

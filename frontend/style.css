@@ -607,3 +607,17 @@ input[type="file"] {
     /* ^ Reduced padding on mobile. */
   }
 }
+/* ── Header Logo ──────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
